@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+        <title></title>
+        <meta charset="utf-8">
+        <style type="text/css">
+          html, body{
+            margin:0;
+            padding:0;
+            overflow:hidden;
+            width:100%;
+            height:100%;
+            scroll-behavior: smooth;
+            user-select: none;
+          }
+
+          scroll-container {
+            width:100%;
+            overflow-y: scroll;
+            scroll-behavior: smooth;
+          }
+
+          scroll-page {
+            overflow:hidden;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            height: 100%;
+          }
+
+          scroll-page div {
+            display: block;
+            text-align: center;
+            border: 3px dashed gray;
+            padding: 5vh 5vw;}
+        </style>
+
+        <script type="text/javascript">
+          //----------------------------------------------------------//
+
+          const START = 1;            // First anchor starts with 1
+          const PREFIX_ANCHOR = "a"   // id = "a1" (see HTML-code below)
+          const TIME_WAIT = 500       // blocking-time (ms) between every scroll/slide event
+          const ELEMENT_SLIDE = "scroll-page" // HTML-element for every slide
+
+          //----------------------------------------------------------//
+
+          const HASH = "#"
+          var anchor;
+          var containers;
+          var mouse_y;
+          var scroll_locked = false;
+          var timeout_scroll_lock = null;
+
+          function wheel(event) {
+              if (event !== undefined) event.preventDefault()
+              if (scroll_locked == true) return
+              scroll_locked = true
+              window.clearTimeout(timeout_scroll_lock)
+              timeout_scroll_lock = window.setTimeout(function(){
+                scroll_locked = false
+              }, TIME_WAIT);
+
+              if (event !== undefined){
+                if (event.deltaY > 0) anchor++
+                else if (event.deltaY < 0) anchor--
+              }
+              if (anchor > containers) anchor = containers
+              else if (anchor < START) anchor = START;
+              window.location = HASH + PREFIX_ANCHOR + parseInt(anchor)
+          }
+
+          function init(){
+            containers = document.getElementsByTagName(ELEMENT_SLIDE).length
+            if(containers < 1){
+              console.error("No "+ELEMENT_SLIDE+"-elements found!")
+              return
+            }
+            anchor = parseInt(location.hash.substring(location.hash.length -1))
+            if (isNaN(anchor)) anchor = START;
+
+            mouse_y = 0;
+            wheel()
+          }
+
+          function mousedown(event){
+              mouse_y = event.screenY;
+          }
+
+          function mouseup(event){
+             event.deltaY = mouse_y - event.screenY;
+             wheel(event);
+          }
+
+          window.onload = init
+          window.onwheel = wheel
+          window.onmousedown = mousedown
+          window.onmouseup = mouseup
+        </script>
+    </head>
+    <body>
+      <scroll-container>
+
+        <scroll-page id="a1" style="background:AliceBlue;">
+          <div><h1>1</h1></div>
+       </scroll-page>
+
+        <scroll-page id="a2" style="background:Beige;">
+          <div><h1>1</h1></div>
+          <div><h2>2</h2></div>
+       </scroll-page>
+
+        <scroll-page id="a3" style="background:Azure;">
+          <div><h1>1</h1></div>
+          <div><h2>2</h2></div>
+          <div><h3>3</h3></div>
+       </scroll-page>
+
+      </scroll-container>
+    </body>
+</html>
+
