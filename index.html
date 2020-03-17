@@ -2,38 +2,33 @@
 <html>
     <head>
         <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-        <title></title>
-        <meta charset="utf-8">
+        <title>tiny-fullscreen-html-s(l)ideshow</title>
+        <meta charset="utf-8" />
         <style type="text/css">
           html, body{
+            overflow:hidden;/* this disables the document's scrollbars */
             margin:0;
-            padding:0;
-            overflow:hidden;
-            width:100%;
             height:100%;
             scroll-behavior: smooth;
-            user-select: none;
-          }
-
-          scroll-container {
-            width:100%;
-            overflow-y: scroll;
-            scroll-behavior: smooth;
+            user-select: none;/* this disables text-selection */
           }
 
           scroll-page {
-            overflow:hidden;
             display: flex;
-            align-items: center;
-            justify-content: space-around;
+            align-items: center; /* vertical alignment of children */
+            justify-content: space-around; /* equal space between each child-container */
             height: 100%;
+            width:100%;
           }
 
-          scroll-page div {
-            display: block;
-            text-align: center;
-            border: 3px dashed gray;
-            padding: 5vh 5vw;}
+          scroll-page > div {
+            display:flex;
+            flex-basis:20vw;
+            height:50vh;
+            align-items: center;
+            justify-content: center;
+            border: 3px dashed #333;
+          }
         </style>
 
         <script type="text/javascript">
@@ -53,7 +48,7 @@
           var scroll_locked = false;
           var timeout_scroll_lock = null;
 
-          function wheel(event) {
+          function sideshow_wheel(event) {
               if (event !== undefined) event.preventDefault()
               if (scroll_locked == true) return
               scroll_locked = true
@@ -71,7 +66,7 @@
               window.location = HASH + PREFIX_ANCHOR + parseInt(anchor)
           }
 
-          function init(){
+          function sideshow_init(){
             containers = document.getElementsByTagName(ELEMENT_SLIDE).length
             if(containers < 1){
               console.error("No "+ELEMENT_SLIDE+"-elements found!")
@@ -81,22 +76,22 @@
             if (isNaN(anchor)) anchor = START;
 
             mouse_y = 0;
-            wheel()
+            sideshow_wheel()
           }
 
-          function mousedown(event){
+          function sideshow_mousedown(event){
               mouse_y = event.screenY;
           }
 
-          function mouseup(event){
+          function sideshow_mouseup(event){
              event.deltaY = mouse_y - event.screenY;
-             wheel(event);
+             sideshow_wheel(event);
           }
 
-          window.onload = init
-          window.onwheel = wheel
-          window.onmousedown = mousedown
-          window.onmouseup = mouseup
+          window.onload = sideshow_init
+          window.onwheel = sideshow_wheel
+          window.onmousedown = sideshow_mousedown
+          window.onmouseup = sideshow_mouseup
         </script>
     </head>
     <body>
